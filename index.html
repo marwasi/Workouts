@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout Tracker</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        button { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Workout Tracker</h1>
+    <div>
+        <label for="exerciseName">Exercise Name:</label>
+        <input type="text" id="exerciseName">
+        <label for="weight">Weight:</label>
+        <input type="number" id="weight">
+        <label for="reps">Reps:</label>
+        <input type="number" id="reps">
+        <label for="sets">Sets:</label>
+        <input type="number" id="sets">
+        <label for="type">Type:</label>
+        <select id="type">
+            <option value="free weights">Free Weights</option>
+            <option value="machines">Machines</option>
+        </select>
+        <button id="addExercise">Add Exercise</button>
+    </div>
+    <table id="workoutTable">
+        <thead>
+            <tr>
+                <th>Exercise Name</th>
+                <th>Weight</th>
+                <th>Reps</th>
+                <th>Sets</th>
+                <th>Type</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script>
+        const addExerciseButton = document.getElementById('addExercise');
+        const workoutTableBody = document.querySelector('#workoutTable tbody');
+
+        function loadExercises() {
+            const exercises = JSON.parse(localStorage.getItem('workouts')) || [];
+            workoutTableBody.innerHTML = '';
+            exercises.forEach((exercise, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${exercise.name}</td><td>${exercise.weight}</td><td>${exercise.reps}</td><td>${exercise.sets}</td><td>${exercise.type}</td><td><button onclick='deleteExercise(${index})'>Delete</button></td>`;
+                workoutTableBody.appendChild(row);
+            });
+        }
+
+        function addExercise() {
+            const name = document.getElementById('exerciseName').value;
+            const weight = document.getElementById('weight').value;
+            const reps = document.getElementById('reps').value;
+            const sets = document.getElementById('sets').value;
+            const type = document.getElementById('type').value;
+            if (name && weight && reps && sets) {
+                const exercise = { name, weight, reps, sets, type };
+                const exercises = JSON.parse(localStorage.getItem('workouts')) || [];
+                exercises.push(exercise);
+                localStorage.setItem('workouts', JSON.stringify(exercises));
+                loadExercises();
+            }
+        }
+
+        function deleteExercise(index) {
+            const exercises = JSON.parse(localStorage.getItem('workouts'));
+            exercises.splice(index, 1);
+            localStorage.setItem('workouts', JSON.stringify(exercises));
+            loadExercises();
+        }
+
+        addExerciseButton.addEventListener('click', addExercise);
+        loadExercises();
+    </script>
+</body>
+</html>
